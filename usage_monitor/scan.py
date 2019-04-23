@@ -13,7 +13,7 @@ def scan(config: UsageConfig):
         month_ratio = now.day / calendar.monthrange(now.year, now.month)[1]
 
         usage_ratio = calculate_usage(
-            config.xplornet_username, config.xplornet_password
+            config.xplornet_username, config.xplornet_password, driver=config.driver,
         )
 
         logging.info("Month: %f\nUsage: %f", month_ratio, usage_ratio)

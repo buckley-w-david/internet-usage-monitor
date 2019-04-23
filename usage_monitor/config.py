@@ -1,9 +1,18 @@
 import configparser
+import enum
 import os
 import typing
 
+class Driver(enum.Enum):
+    FIREFOX = enum.auto()
+    CHROME = enum.auto()
+
+    @staticmethod
+    def from_str(name: str) -> 'Driver':
+        getattr(Driver, name.upper())
 
 class UsageConfig(typing.NamedTuple):
+    driver: Driver
     xplornet_username: str
     xplornet_password: str
 
@@ -22,6 +31,7 @@ class UsageConfig(typing.NamedTuple):
         config.read(filename)
 
         return UsageConfig(
+            driver=Driver.from_str(config.get("xplornet", "driver", fallback="FIREFOX")),
             xplornet_username=config["xplornet"]["username"],
             xplornet_password=config["xplornet"]["password"],
             email_server=config["email"]["server"],
@@ -43,6 +53,7 @@ class UsageConfig(typing.NamedTuple):
     @staticmethod
     def from_env() -> "UsageConfig":
         return UsageConfig(
+            driver=Driver.from_str(os.environ.get("XPLORNET_DRIVER", "FIREFOX")),
             xplornet_username=os.environ["XPLORNET_USERNAME"],
             xplornet_password=os.environ["XPLORNET_PASSWORD"],
             email_server=os.environ["EMAIL_SERVER"],
