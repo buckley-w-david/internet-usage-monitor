@@ -68,14 +68,16 @@ def calculate_usage(username: str, password: str) -> float:
         #       paragraph element, but before it fills that paragraph with the percentage selenium will grab it, and so
         #       we would error out trying to cast it to a float
         usage_present = WebDriverWait(driver, 10).until(
-            EC.text_to_be_present_in_element((By.CSS_SELECTOR, "p[class='usageAmt']"), '%')
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, "p[class='usageAmt']"), "%"
+            )
         )
         if usage_present:
             usage = driver.find_element_by_css_selector("p[class='usageAmt']")
             return float(usage.text.strip("%")) / 100
 
         # TODO
-        raise Exception('MAKE ME A SPECIFIC EXCEPTION')
+        raise Exception("MAKE ME A SPECIFIC EXCEPTION")
 
 
 if __name__ == "__main__":

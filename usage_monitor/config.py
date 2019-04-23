@@ -13,6 +13,9 @@ class UsageConfig(typing.NamedTuple):
     email_sender: str
     email_recipients: typing.List[str]
 
+    debug: bool
+    debug_recipients: typing.List[str]
+
     @staticmethod
     def from_file(filename: str) -> "UsageConfig":
         config = configparser.ConfigParser()
@@ -28,6 +31,13 @@ class UsageConfig(typing.NamedTuple):
             email_recipients=[
                 email.strip() for email in config["email"]["recipients"].split(",")
             ],
+            debug=config.getboolean("debug", "debug", fallback=False),
+            debug_recipients=[
+                email.strip()
+                for email in config.get(
+                    "debug", "recipients", fallback=config["email"]["recipients"]
+                ).split(",")
+            ],
         )
 
     @staticmethod
@@ -41,5 +51,12 @@ class UsageConfig(typing.NamedTuple):
             email_sender=os.environ["EMAIL_SENDER"],
             email_recipients=[
                 email.strip() for email in os.environ["EMAIL_RECIPIENTS"].split(",")
+            ],
+            debug=os.environ.get("DEBUG", "f").lower() in ["y", "yes", "true", "1"],
+            debug_recipients=[
+                email.strip()
+                for email in os.environ.get(
+                    "DEBUG_RECIPIENTS", os.environ["EMAIL_RECIPIENTS"]
+                ).split(",")
             ],
         )
