@@ -5,6 +5,7 @@ A simple project to monitor monthly internet usage, alerting one when they are p
 ## Prerequisites
 
  * Python3.6+
+ * [Firefox](https://www.mozilla.org/firefox)
  * [geckodriver](https://github.com/mozilla/geckodriver)
 
 ## Setup
