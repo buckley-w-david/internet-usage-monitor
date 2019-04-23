@@ -3,16 +3,12 @@ import enum
 import os
 import typing
 
-class Driver(enum.Enum):
-    FIREFOX = enum.auto()
-    CHROME = enum.auto()
-
-    @staticmethod
-    def from_str(name: str) -> 'Driver':
-        getattr(Driver, name.upper())
+if typing.TYPE_CHECKING:
+    from selenium.webdriver.remote.webdriver import WebDriver
 
 class UsageConfig(typing.NamedTuple):
-    driver: Driver
+    driver: typing.Optional['WebDriver']
+
     xplornet_username: str
     xplornet_password: str
 
@@ -26,12 +22,12 @@ class UsageConfig(typing.NamedTuple):
     debug_recipients: typing.List[str]
 
     @staticmethod
-    def from_file(filename: str) -> "UsageConfig":
+    def from_file(filename: str, *, driver=None) -> "UsageConfig":
         config = configparser.ConfigParser()
         config.read(filename)
 
         return UsageConfig(
-            driver=Driver.from_str(config.get("xplornet", "driver", fallback="FIREFOX")),
+            driver=driver,
             xplornet_username=config["xplornet"]["username"],
             xplornet_password=config["xplornet"]["password"],
             email_server=config["email"]["server"],
@@ -51,9 +47,9 @@ class UsageConfig(typing.NamedTuple):
         )
 
     @staticmethod
-    def from_env() -> "UsageConfig":
+    def from_env(*, driver=None) -> "UsageConfig":
         return UsageConfig(
-            driver=Driver.from_str(os.environ.get("XPLORNET_DRIVER", "FIREFOX")),
+            driver=driver,
             xplornet_username=os.environ["XPLORNET_USERNAME"],
             xplornet_password=os.environ["XPLORNET_PASSWORD"],
             email_server=os.environ["EMAIL_SERVER"],
